@@ -102,7 +102,7 @@ const char *http_request_line(int fd, char *reqpath, char *env, size_t *env_len)
     }
 
     /* decode URL escape sequences in the requested path into reqpath */
-    url_decode(reqpath, sp1);
+    url_decode(reqpath, sp1, 2000);
 
     envp += sprintf(envp, "REQUEST_URI=%s", reqpath) + 1;
 
@@ -156,7 +156,7 @@ const char *http_request_headers(int fd)
         }
 
         /* Decode URL escape sequences in the value */
-        url_decode(value, sp);
+        url_decode(value, sp, sizeof(value));
 
         /* Store header in env. variable for application code */
         /* Some special headers don't use the HTTP_ prefix. */
@@ -279,7 +279,7 @@ void http_serve(int fd, const char *name)
     getcwd(pn, sizeof(pn));
     setenv("DOCUMENT_ROOT", pn, 1);
 
-    strcat(pn, name);
+    strncat(pn, name, sizeof(pn));
     split_path(pn);
 
     if (!stat(pn, &st))
@@ -434,8 +434,9 @@ void http_serve_executable(int fd, const char *pn)
     }
 }
 
-void url_decode(char *dst, const char *src)
+void url_decode(char *dst, const char *src, int size)
 {
+    int i = 0;
     for (;;)
     {
         if (src[0] == '%' && src[1] && src[2])
@@ -461,6 +462,9 @@ void url_decode(char *dst, const char *src)
             if (*dst == '\0')
                 break;
         }
+
+        i++;
+        if (i >= size) break;
 
         dst++;
     }
