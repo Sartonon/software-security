@@ -39,11 +39,28 @@ ei tarkista meneekö puskuri yli
     char value[512];
     char envvar[512];
 
-    /* For lab 2: don't remove this line. */
-    touch("http_request_headers");
+    url_decode(value, sp);
 
-    setenv(envvar, value, 1);
+[http.c:282]
+Tässä strcatilla laitetaan name pn muuttujaan. Namessa on http-kutsu osoitepolk
+joten pitällä sellaisella saa tässä puskuriylivuodon
 
+    getcwd(pn, sizeof(pn));
+    setenv("DOCUMENT_ROOT", pn, 1);
 
+    strcat(pn, name);
+    split_path(pn);
+
+[http.c:353]
+Tässä voidaan char name[] ylivuotaaa esim pitkällä requestilla, jossa on monta
+kautta-merkkiä
+
+for (i = 0; indices[i]; i++) {
+        dir_join(name, pn, indices[i]);
+        if (stat(name, &st) == 0 && S_ISREG(st.st_mode)) {
+            dir_join(name, getenv("SCRIPT_NAME"), indices[i]);
+            break;
+        }
+    }
 
 # many more come here
