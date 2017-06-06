@@ -3,15 +3,47 @@
 # desc
 #
 
-[zookd.c:1612]
-description goes here. for example, the 'buf' variable can be
-overwritten by the 'msg' variable because ...
+[zookd.c:65]
+Tässä reqpath muuttujan puskuri voi vuotaa yli jos HTTP requestin pathi on liian pitkä
 
-    <paste offending line(s) of code here>
+    char reqpath[2048];
+    const char *errmsg;
+    int i;
 
-[http.c:1512]
-another description.
+    /* get the request line */
+    if ((errmsg = http_request_line(fd, reqpath, env, &env_len)))
+        return http_err(fd, 500, "http_request_line: %s", errmsg);
+   
+    http.c http_request_line
 
-    <paste offending line(s) of code here>
+    url_decode(value, sp);
+
+[http.c:121]
+Puskuriylivuoto voi tulla envvarriin pitkällä request header avaimella, sprintf
+ei tarkista meneekö puskuri yli
+
+    static char buf[8192];      /* static variables are not on the stack */
+    int i;
+    char value[512];
+    char envvar[512];
+
+    sprintf(envvar, "HTTP_%s", buf);
+
+    /* For lab 2: don't remove this line. */
+    touch("http_request_headers");
+
+
+[http.c:120]
+    Request headerin avaimen arvo voi vuotaa yli tässä tapauksessa
+
+    char value[512];
+    char envvar[512];
+
+    /* For lab 2: don't remove this line. */
+    touch("http_request_headers");
+
+    setenv(envvar, value, 1);
+
+
 
 # many more come here
