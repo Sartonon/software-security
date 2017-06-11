@@ -1,5 +1,6 @@
 from zoodb import *
 from debug import *
+import auth_client
 
 import hashlib
 import random
@@ -11,14 +12,7 @@ def newtoken(db, person):
     return person.token
 
 def login(username, password):
-    db = person_setup()
-    person = db.query(Person).get(username)
-    if not person:
-        return None
-    if person.password == password:
-        return newtoken(db, person)
-    else:
-        return None
+    return auth_client.login(username, password);
 
 def register(username, password):
     db = person_setup()
@@ -27,14 +21,12 @@ def register(username, password):
         return None
     newperson = Person()
     newperson.username = username
-    newperson.password = password
     db.add(newperson)
     db.commit()
-    return newtoken(db, newperson)
+    return auth_client.register(username, password);
 
 def check_token(username, token):
-    db = person_setup()
-    person = db.query(Person).get(username)
+    return auth_client.check_token(username, token)
     if person and person.token == token:
         return True
     else:
