@@ -187,6 +187,14 @@ class sym_minus(sym_binop):
   def _z3expr(self, printable):
     return z3expr(self.a, printable) - z3expr(self.b, printable)
 
+class sym_mul(sym_binop):
+  def _z3expr(self, printable):
+    return z3expr(self.a, printable) * z3expr(self.b, printable)
+
+class sym_div(sym_binop):
+  def _z3expr(self, printable):
+    return z3expr(self.a, printable) / z3expr(self.b, printable)
+
 ## Exercise 2: your code here.
 ## Implement AST nodes for division and multiplication.
 
@@ -480,6 +488,14 @@ class concolic_int(int):
     res = self.__v - o
     return concolic_int(sym_minus(ast(self), ast(o)), res)
 
+  def __mul__(self, o):
+    res = self.__v * o
+    return concolic_int(sym_mul(ast(self), ast(o)), res)
+
+  def __div__(self, o):
+    res = self.__v / o
+    return concolic_int(sym_div(ast(self), ast(o)), res)
+
   ## Exercise 2: your code here.
   ## Implement symbolic division and multiplication.
 
@@ -522,6 +538,17 @@ class concolic_str(str):
   ## Exercise 4: your code here.
   ## Implement symbolic versions of string length (override __len__)
   ## and contains (override __contains__).
+
+  def __contains__(self, o):
+    if isinstance(o, concolic_str):
+      res = o.__v in self.__v
+    else:
+      res = o in self.__v
+    return concolic_bool(sym_contains(ast(self), ast(o)), res)
+
+  def __len__(self):
+    res = len(self.__v)
+    return concolic_int(sym_length(ast(self)), res)
 
   def startswith(self, o):
     res = self.__v.startswith(o)
@@ -680,6 +707,19 @@ def concolic_test(testfunc, maxiter = 100, verbose = 0):
 
     ## for each branch, invoke Z3 to find an input that would go
     ## the other way, and add it to the list of inputs to explore.
+    prev = []
+    for constr, call in zip(cur_path_constr, cur_path_constr_callers):
+      new_branch = prev + [sym_not(constr)]
+      prev.append(constr)
+      nb = sym_and(*new_branch)
+      if nb in checked:
+         continue
+      (ok, model) = fork_and_check(nb)
+      new_inputs = concrete_values.copy()
+      new_inputs.update(model)
+      checked.add(nb)
+      inputs.add(new_inputs, call)
+      
 
     ## Exercise 3: your code here.
     ##
