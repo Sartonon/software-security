@@ -1,6 +1,7 @@
 from zoodb import *
 from debug import *
 import auth_client
+import bank_client
 
 import hashlib
 import random
@@ -23,6 +24,7 @@ def register(username, password):
     newperson.username = username
     db.add(newperson)
     db.commit()
+    bank_client.add_bank(username)
     return auth_client.register(username, password);
 
 def check_token(username, token):

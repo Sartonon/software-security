@@ -58,6 +58,8 @@ cp -r /usr/share/zoneinfo/America /jail/usr/share/zoneinfo/
 
 create_socket_dir /jail/echosvc 61010:61010 755
 create_socket_dir /jail/authsvc 65011:61011 755
+create_socket_dir /jail/banksvc 66011:61011 755
+create_socket_dir /jail/profilesvc 61010:61010 755
 
 mkdir -p /jail/tmp
 chmod a+rwxt /jail/tmp
@@ -71,14 +73,17 @@ rm -rf /jail/zoobar/db
 python /jail/zoobar/zoodb.py init-person
 python /jail/zoobar/zoodb.py init-transfer
 python /jail/zoobar/zoodb.py init-cred
+python /jail/zoobar/zoodb.py init-bank
 
-set_perms 61011:61011 700 /jail/zoobar/db/person/person.db
-set_perms 61011:61011 700 /jail/zoobar/db/person/
+set_perms 61011:61011 770 /jail/zoobar/db/person/person.db
+set_perms 61011:61011 770 /jail/zoobar/db/person/
 set_perms 61011:61011 750 /jail/zoobar/db/
-set_perms 61011:61011 750 /jail/zoobar/db/transfer/
+set_perms 66011:61011 770 /jail/zoobar/db/transfer/
 set_perms 61011:61011 755 /jail/zoobar/
-set_perms 61011:61011 750 /jail/zoobar/db/transfer/transfer.db
+set_perms 66011:61011 770 /jail/zoobar/db/transfer/transfer.db
 set_perms 123:456     770 /jail/zoobar/index.cgi
 # set_perms 123:456     770 /jail/zoobar/
 set_perms 65011:61011 700 /jail/zoobar/db/cred/
 set_perms 65011:61011 700 /jail/zoobar/db/cred/cred.db
+set_perms 66011:61011 700 /jail/zoobar/db/bank/
+set_perms 66011:61011 700 /jail/zoobar/db/bank/bank.db

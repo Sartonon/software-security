@@ -18,6 +18,10 @@ import errno
 
 class ProfileAPIServer(rpclib.RpcServer):
     def __init__(self, user, visitor):
+        cred_db = zoodb.cred_setup()
+        p = cred_db.query(zoodb.Cred).get(user)
+        self.token = p.token
+        os.setuid(61011)
         self.user = user
         self.visitor = visitor
 
@@ -48,7 +52,7 @@ class ProfileAPIServer(rpclib.RpcServer):
                }
 
     def rpc_xfer(self, target, zoobars):
-        bank.transfer(self.user, target, zoobars)
+        bank.transfer(self.user, target, zoobars, self.token)
 
 def run_profile(pcode, profile_api_client):
     globals = {'api': profile_api_client}
@@ -56,9 +60,15 @@ def run_profile(pcode, profile_api_client):
 
 class ProfileServer(rpclib.RpcServer):
     def rpc_run(self, pcode, user, visitor):
-        uid = 0
+        uid = 61011
 
-        userdir = '/tmp'
+        userdir = '/temp' + '/' + user.replace('/', 's').replace('.', 'a')
+        log(userdir)
+
+	if not os.path.exists(userdir):
+            os.makedirs(userdir)
+
+        os.chown(userdir, uid, uid)
 
         (sa, sb) = socket.socketpair(socket.AF_UNIX, socket.SOCK_STREAM, 0)
         pid = os.fork()

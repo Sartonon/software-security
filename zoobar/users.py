@@ -14,6 +14,7 @@ def users():
     if 'user' in request.values:
         persondb = person_setup()
         user = persondb.query(Person).get(request.values['user'])
+        log(user.username)
         if user:
             transferdb = transfer_setup()
             p = user.profile

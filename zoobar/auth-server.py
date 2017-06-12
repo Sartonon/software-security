@@ -5,6 +5,7 @@ import sys
 import auth
 from zoodb import *
 from debug import *
+import pbkdf2
 
 import hashlib
 import random
@@ -21,7 +22,7 @@ class AuthRpcServer(rpclib.RpcServer):
         cred = db.query(Cred).get(username)
         if not cred:
             return None
-        if cred.password == password:
+        if cred.password == pbkdf2.PBKDF2(password, cred.salt).hexread(32):
             return newtoken(db, cred)
         else:
             return None
@@ -30,7 +31,8 @@ class AuthRpcServer(rpclib.RpcServer):
         db = cred_setup()
         newcred = Cred()
         newcred.username = user
-        newcred.password = passw
+        newcred.salt = os.urandom(5).encode('base64')
+        newcred.password = pbkdf2.PBKDF2(passw, newcred.salt).hexread(32)
         db.add(newcred)
         db.commit()
         return newtoken(db, newcred)
