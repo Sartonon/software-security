@@ -13,6 +13,8 @@ def transfer():
     try:
         if 'recipient' in request.form:
             zoobars = symint(request.form['zoobars'])
+            if (zoobars < 0): return
+            if (g.user.person.username == request.form['recipient']): return
             bank.transfer(g.user.person.username,
                           request.form['recipient'], zoobars)
             warning = "Sent %d zoobars" % zoobars

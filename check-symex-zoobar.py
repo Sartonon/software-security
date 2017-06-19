@@ -37,6 +37,9 @@ def test_stuff():
   adduser(pdb, 'alice', 'atok')
   adduser(pdb, 'bob', 'btok')
   balance1 = sum([p.zoobars for p in pdb.query(zoobar.zoodb.Person).all()])
+  balances_before = [p.zoobars for p in pdb.query(zoobar.zoodb.Person).all()]
+  
+  users_before = pdb.query(zoobar.zoodb.Person).all()
   pdb.commit()
 
   tdb = zoobar.zoodb.transfer_setup()
@@ -80,8 +83,26 @@ def test_stuff():
   ## Detect balance mismatch.
   ## When detected, call report_balance_mismatch()
 
+  users_after = pdb.query(zoobar.zoodb.Person).all()
+  balance_after = sum([p.zoobars for p in pdb.query(zoobar.zoodb.Person).all()])
+  if len(users_after) == len(users_before) and balance1 != balance_after:
+    report_balance_mismatch()
+  
   ## Detect zoobar theft.
   ## When detected, call report_zoobar_theft()
+  balances_after = [p.zoobars for p in pdb.query(zoobar.zoodb.Person).all()] 
+  for b_before, b_after, user in zip(balances_before, balances_after, users_after):
+    # print b_before, b_after, user.username
+    if b_before > b_after:
+     transfers = tdb.query(zoobar.zoodb.Transfer).all()
+     user_found = False
+     for transfer in transfers:
+       # print transfer.sender, user.username
+       if transfer.sender == user.username:
+         user_found = True
+     if not user_found:
+       report_zoobar_theft()
+       
 
 fuzzy.concolic_test(test_stuff, maxiter=2000, verbose=1)
 

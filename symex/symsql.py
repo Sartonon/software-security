@@ -16,11 +16,7 @@ def newget(query, primary_key):
   for row in query.all():
     pk = row.__table__.primary_key.columns.keys()[0]
     value = getattr(row, pk)
-    print "value", value
-    print "primary_key", primary_key
-    if primary_key is value:
-      print "lol", value
-      return value
-  return None
+    if primary_key == value:
+      return row
 
 sqlalchemy.orm.query.Query.get = newget
