@@ -66,7 +66,8 @@ class LabVisitor(object):
         return ''.join(output)
 
     def visit_Identifier(self, node):
-        return node.value
+        
+        return 'sandbox_%s' % node.value
 
     def visit_Assign(self, node):
         # Note: if node.op is ':' this "assignment" is actually a property in
@@ -322,11 +323,14 @@ class LabVisitor(object):
             template = '(%s.%s)'
         else:
             template = '%s.%s'
-        s = template % (self.visit(node.node), self.visit(node.identifier))
+        moi = self.visit(node.identifier).replace('sandbox_', '')
+        if moi == "__proto__" or moi == "constructor" or moi == "__defineGetter__" or moi == "__defineSetter__" or moi == "eval":
+          moi = "__invalid__"
+        s = template % (self.visit(node.node), moi)
         return s
 
     def visit_BracketAccessor(self, node):
-        s = '%s[%s]' % (self.visit(node.node), self.visit(node.expr))
+        s = '%s[bracket_check(%s)]' % (self.visit(node.node), self.visit(node.expr))
         return s
 
     def visit_FunctionCall(self, node):
@@ -363,5 +367,5 @@ class LabVisitor(object):
         return s
 
     def visit_This(self, node):
-        return 'this'
+        return 'this_check(this)'
 

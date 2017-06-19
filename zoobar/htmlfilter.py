@@ -14,11 +14,29 @@ libcode = '''
             return {
                 get onclick() { return e.onclick; },
                 set onclick(h) { e.onclick = h; },
+                set textContent(c) { e.textContent = c },
+                get textContent() { return e.textContent }
             }
         },
     };
 
-    // Do not change these functions.
+    var bracket_check = function(s) {
+      if (s === "__proto__" || s === "constructor" || s === "__defineGetter__" || s ===  "__defineSetter__" || typeof s === "object") return "__invalid__";
+      return s; 
+    }
+   
+    var this_check = function(s) {
+      if (s === window) return null;
+      return s; 
+    }
+
+    var sandbox_setTimeout = function(func, time) {
+       if (typeof func === "function") {
+         setTimeout(func, time);
+       }
+    }
+
+    // Do not change these functions
     function sandbox_grader(url) {
         window.location = url;
     }
