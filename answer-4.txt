@@ -20,6 +20,11 @@
         button2.click();
      }
   </script>
+  <style>
+    .log tbody {
+      display: none
+    }
+  </style>
   <div>
     <p>Scanning for viruses...</p>
     <div style="display:none;">
